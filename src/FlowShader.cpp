@@ -95,7 +95,7 @@ string FlowShader::getFlowShader(){
                                return vec4(gray,gray,gray,1.0);
                            }
                            vec4 texture2DRectGray(sampler2DRect tex, vec2 coord) {
-                               return getGrayScale(texture2DRect(tex, coord));
+                               return getGrayScale(texture(tex, coord));
                            }
 
                            void main()
@@ -146,7 +146,7 @@ string FlowShader::getReposShader(){
                            uniform sampler2DRect tex1;
 
                            vec2 get2DOff(sampler2DRect tex ,vec2 coord) {
-                               vec4 col = texture2DRect(tex, coord);
+                               vec4 col = texture(tex, coord);
                                if (col.w > 0.95) col.z *= -1.0;
                                return vec2(col.x-col.y, col.z);
                            }
@@ -154,7 +154,7 @@ string FlowShader::getReposShader(){
                            void main()
                            {
                                vec2 coord =  get2DOff(tex1 ,varyingtexcoord)*amt+varyingtexcoord;  //relative coordinates
-                               vec4 repos = texture2DRect(tex0, coord);
+                               vec4 repos = texture(tex0, coord);
                                gl_FragColor = repos;
                            }
                            )";
@@ -173,7 +173,7 @@ string FlowShader::getBlurShader(){
                            out vec4 gl_FragColor;
                            )";
     string shaderBody = R"(
-                           uniform sampler2DRect texture;
+                           uniform sampler2DRect inTexture;
                            uniform vec2 texOffset;
                            uniform float blurSize;
                            uniform float horizontalPass; // 0 or 1 to indicate vertical or horizontal pass
@@ -186,7 +186,7 @@ string FlowShader::getBlurShader(){
                            const float pi = 3.14159265;
 
                            vec4 get2DOff(sampler2DRect tex ,vec2 coord) {
-                               vec4 col = texture2DRect(tex, coord);
+                               vec4 col = texture(tex, coord);
                                if (col.w > 0.95)  col.z *= -1.0;
                                return vec4(col.y-col.x, col.z, 1.0, 1.0);
                            }
@@ -215,16 +215,16 @@ string FlowShader::getBlurShader(){
                                float coefficientSum = 0.0;
 
                                // Take the central sample first...
-                               avgValue += get2DOff(texture, varyingtexcoord.st) * incrementalGaussian.x;
+                               avgValue += get2DOff(inTexture, varyingtexcoord.st) * incrementalGaussian.x;
                                coefficientSum += incrementalGaussian.x;
                                incrementalGaussian.xy *= incrementalGaussian.yz;
 
                                // Go through the remaining 8 vertical samples (4 on each side of the center)
 
                                for (float i = 1.0; i <= numBlurPixelsPerSide; i++) {
-                                   avgValue += get2DOff(texture, varyingtexcoord.st - i * texOffset *
+                                   avgValue += get2DOff(inTexture, varyingtexcoord.st - i * texOffset *
                                                         blurMultiplyVec) * incrementalGaussian.x;
-                                   avgValue += get2DOff(texture, varyingtexcoord.st + i * texOffset *
+                                   avgValue += get2DOff(inTexture, varyingtexcoord.st + i * texOffset *
                                                         blurMultiplyVec) * incrementalGaussian.x;
                                    coefficientSum += 2.0 * incrementalGaussian.x;
                                    incrementalGaussian.xy *= incrementalGaussian.yz;

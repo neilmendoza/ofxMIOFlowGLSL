@@ -4,9 +4,8 @@
 //========================================================================
 int main( ){
     ofGLFWWindowSettings settings;
-    settings.setGLVersion(4,3);
-    settings.windowMode = OF_WINDOW;
-    settings.multiMonitorFullScreen = true;
-    ofCreateWindow(settings);			// <-------- setup the GL context
-    ofRunApp( new testApp());
+    settings.setGLVersion(3, 3);
+    settings.setSize(1280, 960);
+    ofCreateWindow(settings);
+    ofRunApp(new testApp());
 }

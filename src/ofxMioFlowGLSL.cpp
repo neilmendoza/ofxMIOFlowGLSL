@@ -71,7 +71,7 @@ void ofxMioFlowGLSL::update(const ofTexture& cur) {
     if(doShaderBlur) {
         fboBlurH.begin();
         flowShader.blur.begin();
-        flowShader.blur.setUniformTexture("texture", fboFlow, 0);
+        flowShader.blur.setUniformTexture("inTexture", fboFlow, 0);
         flowShader.blur.setUniform1f("blurSize", blurAmount);
         flowShader.blur.setUniform1f("sigma", blurAmount/2.0);
         flowShader.blur.setUniform2f("texOffset",2.0,2.0);
@@ -82,7 +82,7 @@ void ofxMioFlowGLSL::update(const ofTexture& cur) {
 
         fboBlurV.begin();
         flowShader.blur.begin();
-        flowShader.blur.setUniformTexture("texture",fboBlurH, 0);
+        flowShader.blur.setUniformTexture("inTexture",fboBlurH, 0);
         flowShader.blur.setUniform1f("blurSize", blurAmount);
         flowShader.blur.setUniform1f("sigma", blurAmount/2.0);
         flowShader.blur.setUniform2f("texOffset",2.0,2.0);

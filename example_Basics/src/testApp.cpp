@@ -1,9 +1,9 @@
-﻿
+
 #include "testApp.h"  
 
 
 void testApp::setup(){  
-    cam.initGrabber(640, 480, true);
+    cam.setup(640, 480, true);
     cam.setUseTexture(true);
 
     mioFlow.setup(cam.getWidth(), cam.getHeight());
